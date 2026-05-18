@@ -1,0 +1,827 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>台灣公司查詢</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #0a0e1a;
+    --surface: #111827;
+    --surface2: #1a2235;
+    --border: rgba(99,179,237,0.15);
+    --border-hover: rgba(99,179,237,0.4);
+    --accent: #63b3ed;
+    --accent2: #90cdf4;
+    --accent-dim: rgba(99,179,237,0.08);
+    --text: #e2e8f0;
+    --text-muted: #718096;
+    --text-dim: #4a5568;
+    --success: #68d391;
+    --mono: 'Space Mono', monospace;
+    --sans: 'Noto Sans TC', sans-serif;
+  }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--sans);
+    font-weight: 300;
+    min-height: 100vh;
+    line-height: 1.6;
+  }
+
+  /* NAV */
+  nav {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: rgba(10,14,26,0.92);
+    backdrop-filter: blur(12px);
+    border-bottom: 0.5px solid var(--border);
+    padding: 0 2rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 60px;
+  }
+
+  .logo {
+    font-family: var(--mono);
+    font-size: 14px;
+    color: var(--accent);
+    letter-spacing: 0.08em;
+    text-decoration: none;
+  }
+
+  .logo span { color: var(--text-muted); }
+
+  .nav-links { display: flex; gap: 1.5rem; }
+  .nav-links a {
+    font-size: 13px;
+    color: var(--text-muted);
+    text-decoration: none;
+    letter-spacing: 0.05em;
+    transition: color 0.2s;
+    cursor: pointer;
+  }
+  .nav-links a:hover, .nav-links a.active { color: var(--accent); }
+
+  /* HERO */
+  .hero {
+    padding: 5rem 2rem 3rem;
+    max-width: 800px;
+    margin: 0 auto;
+    text-align: center;
+  }
+
+  .hero-label {
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.15em;
+    color: var(--accent);
+    text-transform: uppercase;
+    margin-bottom: 1.5rem;
+    opacity: 0.8;
+  }
+
+  h1 {
+    font-size: clamp(2rem, 5vw, 3.5rem);
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    line-height: 1.15;
+    margin-bottom: 1rem;
+    background: linear-gradient(135deg, #e2e8f0 0%, #90cdf4 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .hero-sub {
+    font-size: 15px;
+    color: var(--text-muted);
+    margin-bottom: 2.5rem;
+    font-weight: 300;
+  }
+
+  /* SEARCH */
+  .search-wrap {
+    max-width: 600px;
+    margin: 0 auto 1rem;
+    position: relative;
+  }
+
+  .search-inner {
+    display: flex;
+    align-items: center;
+    background: var(--surface);
+    border: 0.5px solid var(--border-hover);
+    border-radius: 10px;
+    overflow: hidden;
+    transition: border-color 0.2s, box-shadow 0.2s;
+  }
+
+  .search-inner:focus-within {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px rgba(99,179,237,0.12);
+  }
+
+  .search-icon {
+    padding: 0 1rem;
+    color: var(--text-muted);
+    font-size: 18px;
+    pointer-events: none;
+  }
+
+  #searchInput {
+    flex: 1;
+    background: none;
+    border: none;
+    outline: none;
+    color: var(--text);
+    font-family: var(--sans);
+    font-size: 15px;
+    padding: 14px 0;
+  }
+
+  #searchInput::placeholder { color: var(--text-dim); }
+
+  .search-btn {
+    background: var(--accent);
+    border: none;
+    color: #0a0e1a;
+    font-family: var(--mono);
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    padding: 0 1.25rem;
+    height: 100%;
+    cursor: pointer;
+    transition: background 0.2s;
+    white-space: nowrap;
+  }
+
+  .search-btn:hover { background: var(--accent2); }
+
+  .search-hint {
+    font-size: 12px;
+    color: var(--text-dim);
+    margin-top: 0.5rem;
+    text-align: center;
+    font-family: var(--mono);
+  }
+
+  /* CITIES */
+  .section {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 2rem 2rem;
+  }
+
+  .section-header {
+    display: flex;
+    align-items: baseline;
+    gap: 0.75rem;
+    margin-bottom: 1.25rem;
+  }
+
+  .section-title {
+    font-size: 13px;
+    font-family: var(--mono);
+    color: var(--accent);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  .section-line {
+    flex: 1;
+    height: 0.5px;
+    background: var(--border);
+  }
+
+  .city-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+    gap: 8px;
+    margin-bottom: 0.5rem;
+  }
+
+  .city-btn {
+    background: var(--surface);
+    border: 0.5px solid var(--border);
+    border-radius: 8px;
+    padding: 10px 8px;
+    color: var(--text-muted);
+    font-family: var(--sans);
+    font-size: 13px;
+    cursor: pointer;
+    transition: all 0.18s;
+    text-align: center;
+    font-weight: 300;
+  }
+
+  .city-btn:hover {
+    border-color: var(--border-hover);
+    color: var(--accent);
+    background: var(--accent-dim);
+  }
+
+  .city-btn.active {
+    border-color: var(--accent);
+    color: var(--accent);
+    background: var(--accent-dim);
+  }
+
+  /* RESULTS */
+  #results-section { display: none; }
+
+  .results-meta {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 1.25rem;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+
+  .results-count {
+    font-family: var(--mono);
+    font-size: 12px;
+    color: var(--text-muted);
+  }
+
+  .results-count strong { color: var(--accent); }
+
+  .results-query {
+    font-family: var(--mono);
+    font-size: 12px;
+    color: var(--text-dim);
+  }
+
+  /* TABLE */
+  .table-wrap {
+    overflow-x: auto;
+    border: 0.5px solid var(--border);
+    border-radius: 10px;
+    background: var(--surface);
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13.5px;
+  }
+
+  thead th {
+    padding: 12px 16px;
+    text-align: left;
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.08em;
+    color: var(--text-muted);
+    border-bottom: 0.5px solid var(--border);
+    background: var(--surface2);
+    white-space: nowrap;
+  }
+
+  tbody tr {
+    border-bottom: 0.5px solid rgba(99,179,237,0.07);
+    transition: background 0.15s;
+  }
+
+  tbody tr:last-child { border-bottom: none; }
+
+  tbody tr:hover { background: var(--accent-dim); }
+
+  tbody td {
+    padding: 13px 16px;
+    color: var(--text);
+    font-weight: 300;
+    vertical-align: middle;
+  }
+
+  .td-name { font-weight: 500; color: var(--text); }
+
+  .td-id {
+    font-family: var(--mono);
+    font-size: 12px;
+    color: var(--accent);
+    letter-spacing: 0.05em;
+  }
+
+  .td-capital {
+    font-family: var(--mono);
+    font-size: 12px;
+    color: var(--success);
+  }
+
+  .td-addr {
+    color: var(--text-muted);
+    font-size: 12.5px;
+    max-width: 240px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .td-date {
+    font-family: var(--mono);
+    font-size: 12px;
+    color: var(--text-dim);
+  }
+
+  .status-tag {
+    display: inline-block;
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.05em;
+    padding: 2px 8px;
+    border-radius: 4px;
+    border: 0.5px solid;
+  }
+
+  .status-active {
+    color: var(--success);
+    border-color: rgba(104,211,145,0.3);
+    background: rgba(104,211,145,0.06);
+  }
+
+  .status-inactive {
+    color: var(--text-dim);
+    border-color: var(--border);
+    background: transparent;
+  }
+
+  /* LOADING / EMPTY */
+  .state-box {
+    padding: 4rem 2rem;
+    text-align: center;
+    color: var(--text-dim);
+  }
+
+  .state-icon {
+    font-size: 2rem;
+    margin-bottom: 1rem;
+    opacity: 0.4;
+  }
+
+  .state-title {
+    font-family: var(--mono);
+    font-size: 13px;
+    color: var(--text-muted);
+    margin-bottom: 0.5rem;
+  }
+
+  .state-sub { font-size: 12px; }
+
+  .spinner {
+    width: 28px; height: 28px;
+    border: 2px solid var(--border);
+    border-top-color: var(--accent);
+    border-radius: 50%;
+    animation: spin 0.75s linear infinite;
+    margin: 0 auto 1rem;
+  }
+
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  /* PAGINATION */
+  .pagination {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    margin-top: 1.5rem;
+    flex-wrap: wrap;
+  }
+
+  .page-btn {
+    background: var(--surface);
+    border: 0.5px solid var(--border);
+    border-radius: 6px;
+    color: var(--text-muted);
+    font-family: var(--mono);
+    font-size: 12px;
+    padding: 6px 12px;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+
+  .page-btn:hover:not(:disabled) {
+    border-color: var(--border-hover);
+    color: var(--accent);
+  }
+
+  .page-btn.active {
+    border-color: var(--accent);
+    color: var(--accent);
+    background: var(--accent-dim);
+  }
+
+  .page-btn:disabled {
+    opacity: 0.3;
+    cursor: not-allowed;
+  }
+
+  /* DETAIL MODAL */
+  .modal-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.7);
+    z-index: 200;
+    align-items: center;
+    justify-content: center;
+    padding: 1rem;
+  }
+
+  .modal-overlay.open { display: flex; }
+
+  .modal {
+    background: var(--surface);
+    border: 0.5px solid var(--border-hover);
+    border-radius: 14px;
+    width: 100%;
+    max-width: 560px;
+    max-height: 80vh;
+    overflow-y: auto;
+    padding: 2rem;
+    position: relative;
+  }
+
+  .modal-close {
+    position: absolute;
+    top: 1rem; right: 1rem;
+    background: none;
+    border: 0.5px solid var(--border);
+    border-radius: 6px;
+    color: var(--text-muted);
+    font-size: 18px;
+    cursor: pointer;
+    padding: 2px 8px;
+    transition: all 0.15s;
+    line-height: 1.4;
+  }
+
+  .modal-close:hover { border-color: var(--border-hover); color: var(--text); }
+
+  .modal-id {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--accent);
+    letter-spacing: 0.1em;
+    margin-bottom: 0.5rem;
+  }
+
+  .modal-name {
+    font-size: 1.4rem;
+    font-weight: 700;
+    line-height: 1.3;
+    margin-bottom: 1.5rem;
+    padding-right: 2rem;
+  }
+
+  .detail-grid {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 0;
+    border: 0.5px solid var(--border);
+    border-radius: 8px;
+    overflow: hidden;
+  }
+
+  .detail-label {
+    padding: 10px 14px;
+    font-size: 12px;
+    font-family: var(--mono);
+    color: var(--text-muted);
+    background: var(--surface2);
+    border-bottom: 0.5px solid var(--border);
+    white-space: nowrap;
+    letter-spacing: 0.04em;
+  }
+
+  .detail-val {
+    padding: 10px 14px;
+    font-size: 13px;
+    color: var(--text);
+    border-bottom: 0.5px solid var(--border);
+    font-weight: 300;
+  }
+
+  .detail-label:last-of-type,
+  .detail-val:last-of-type { border-bottom: none; }
+
+  .row-btn {
+    cursor: pointer;
+  }
+
+  /* FOOTER */
+  footer {
+    text-align: center;
+    padding: 3rem 2rem;
+    font-size: 12px;
+    color: var(--text-dim);
+    font-family: var(--mono);
+    border-top: 0.5px solid var(--border);
+    margin-top: 4rem;
+  }
+
+  footer a { color: var(--text-muted); text-decoration: none; }
+  footer a:hover { color: var(--accent); }
+
+  @media (max-width: 640px) {
+    .hero { padding: 3rem 1.25rem 2rem; }
+    .section { padding: 1.5rem 1.25rem; }
+    .city-grid { grid-template-columns: repeat(auto-fill, minmax(80px, 1fr)); }
+    h1 { font-size: 2rem; }
+    .td-addr { max-width: 120px; }
+    nav { padding: 0 1.25rem; }
+    .nav-links { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <a class="logo" href="#">TW<span>.</span>BIZ</a>
+  <div class="nav-links">
+    <a onclick="showHome()" class="active" id="nav-home">首頁</a>
+    <a onclick="searchByType('上市')" id="nav-listed">上市公司</a>
+    <a onclick="searchByType('上櫃')" id="nav-otc">上櫃公司</a>
+  </div>
+</nav>
+
+<div id="home-section">
+  <div class="hero">
+    <div class="hero-label">Taiwan Business Registry</div>
+    <h1>台灣公司資料查詢</h1>
+    <p class="hero-sub">串接政府開放資料平台，即時查詢全台登記公司資訊</p>
+
+    <div class="search-wrap">
+      <div class="search-inner">
+        <span class="search-icon">⌕</span>
+        <input type="text" id="searchInput" placeholder="輸入公司名稱或統一編號…" autocomplete="off" />
+        <button class="search-btn" onclick="doSearch()">SEARCH</button>
+      </div>
+      <div class="search-hint">例：台積電 / 統一企業 / 23892589</div>
+    </div>
+  </div>
+
+</div>
+
+<div id="results-section" class="section">
+  <div class="results-meta">
+    <div class="results-count" id="resultsCount"></div>
+    <div class="results-query" id="resultsQuery"></div>
+  </div>
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>公司名稱</th>
+          <th>統一編號</th>
+          <th>狀態</th>
+          <th>資本額</th>
+          <th>地址</th>
+          <th>設立日期</th>
+        </tr>
+      </thead>
+      <tbody id="resultsBody"></tbody>
+    </table>
+    <div id="stateBox" class="state-box" style="display:none"></div>
+  </div>
+  <div class="pagination" id="pagination"></div>
+
+  <div style="margin-top:1.5rem">
+    <button class="page-btn" onclick="showHome()">← 返回首頁</button>
+  </div>
+</div>
+
+<!-- DETAIL MODAL -->
+<div class="modal-overlay" id="modalOverlay" onclick="closeModal(event)">
+  <div class="modal" id="modalBox">
+    <button class="modal-close" onclick="closeModalDirect()">✕</button>
+    <div class="modal-id" id="modalId"></div>
+    <div class="modal-name" id="modalName"></div>
+    <div class="detail-grid" id="modalGrid"></div>
+  </div>
+</div>
+
+<footer>
+  資料來源：<a href="https://data.gov.tw" target="_blank">政府開放資料平台</a> ／ 經濟部商業司 &nbsp;·&nbsp; 僅供查詢參考
+</footer>
+
+<script>
+const PROXY = 'https://taiwan-api-proxy.kuofong-engineer.workers.dev';
+const API_BASE = `${PROXY}/od/data/api/`;
+// const COMPANY_API = '6BBA2268-1367-4B42-9CCA-BC17499EBE8C';
+const COMPANY_API = '236EE382-4942-41A9-BD03-CA0709025E7C';
+
+let currentPage = 0;
+let currentQuery = '';
+let totalCount = 0;
+const PAGE_SIZE = 25;
+
+function showHome() {
+  document.getElementById('home-section').style.display = '';
+  document.getElementById('results-section').style.display = 'none';
+  setNavActive('nav-home');
+}
+
+function setNavActive(id) {
+  ['nav-home','nav-listed','nav-otc'].forEach(i => {
+    document.getElementById(i).classList.toggle('active', i === id);
+  });
+}
+
+function doSearch() {
+  const q = document.getElementById('searchInput').value.trim();
+  if (!q) return;
+  currentQuery = q;
+  currentPage = 0;
+  fetchCompanies();
+}
+
+// function searchByType(type) {
+//   currentQuery = type;
+//   currentPage = 0;
+//   fetchCompanies();
+//   setNavActive(type === '上市' ? 'nav-listed' : 'nav-otc');
+// }
+
+function showSection() {
+  document.getElementById('home-section').style.display = 'none';
+  document.getElementById('results-section').style.display = 'block';
+}
+
+function showLoading() {
+  document.getElementById('stateBox').style.display = '';
+  document.getElementById('stateBox').innerHTML = `<div class="spinner"></div><div class="state-title">資料載入中...</div>`;
+  document.getElementById('resultsBody').innerHTML = '';
+  document.getElementById('pagination').innerHTML = '';
+}
+
+async function fetchCompanies() {
+  showSection();
+  showLoading();
+
+  const offset = currentPage * PAGE_SIZE;
+  let url = '';
+
+  try {
+    // 判斷是否為統一編號（純數字8碼）
+    const isId = /^\d{8}$/.test(currentQuery.trim());
+    if (isId) {
+      url = `${API_BASE}${COMPANY_API}?$format=json&$filter=Business_Accounting_NO eq ${currentQuery.trim()}&$skip=${offset}&$top=${PAGE_SIZE}`;
+    } else {
+      url = `${API_BASE}${COMPANY_API}?$format=json&$filter=Company_Name like ${encodeURIComponent(currentQuery)} and Company_Status eq 01&$skip=${offset}&$top=${PAGE_SIZE}`;
+    }
+
+    const res = await fetch(url);
+    if (!res.ok) throw new Error('API 回應異常');
+    const data = await res.json();
+
+    renderResults(data, offset);
+  } catch(e) {
+    showError(e.message);
+  }
+}
+
+function renderResults(data, offset) {
+  document.getElementById('stateBox').style.display = 'none';
+
+  const items = Array.isArray(data) ? data : [];
+  const tbody = document.getElementById('resultsBody');
+  tbody.innerHTML = '';
+
+  document.getElementById('resultsCount').innerHTML =
+    `本頁顯示 <strong>${items.length}</strong> 筆`;
+  document.getElementById('resultsQuery').textContent =
+    `查詢：${currentQuery}`;
+
+  if (items.length === 0) {
+    document.getElementById('stateBox').style.display = '';
+    document.getElementById('stateBox').innerHTML = `
+      <div class="state-icon">◎</div>
+      <div class="state-title">查無相關公司</div>
+      <div class="state-sub">請嘗試不同關鍵字或統一編號</div>`;
+    document.getElementById('pagination').innerHTML = '';
+    return;
+  }
+
+  items.forEach(c => {
+    const tr = document.createElement('tr');
+    tr.className = 'row-btn';
+    const isActive = c.Company_Status === '01';
+    const capital = c.Capital_Stock_Amount ? Number(c.Capital_Stock_Amount).toLocaleString() + ' 元' : '—';
+    const date = formatDate(c.Company_Setup_Date);
+    const addr = (c.Company_Location || '—').replace(/　/g, ' ').trim();
+    tr.innerHTML = `
+      <td class="td-name">${c.Company_Name || '—'}</td>
+      <td class="td-id">${c.Business_Accounting_NO || '—'}</td>
+      <td><span class="status-tag ${isActive ? 'status-active' : 'status-inactive'}">${isActive ? 'ACTIVE' : '停業'}</span></td>
+      <td class="td-capital">${capital}</td>
+      <td class="td-addr" title="${addr}">${addr}</td>
+      <td class="td-date">${date}</td>
+    `;
+    tr.onclick = () => openModal(c);
+    tbody.appendChild(tr);
+  });
+
+  renderPagination(items.length);
+}
+
+function renderPagination(count) {
+  const pg = document.getElementById('pagination');
+  pg.innerHTML = '';
+
+  const prevBtn = document.createElement('button');
+  prevBtn.className = 'page-btn';
+  prevBtn.textContent = '← 上頁';
+  prevBtn.disabled = currentPage === 0;
+  prevBtn.onclick = () => { currentPage--; fetchCompanies(); window.scrollTo(0,0); };
+  pg.appendChild(prevBtn);
+
+  const info = document.createElement('span');
+  info.className = 'page-btn';
+  info.style.cursor = 'default';
+  info.textContent = `第 ${currentPage + 1} 頁`;
+  pg.appendChild(info);
+
+  const nextBtn = document.createElement('button');
+  nextBtn.className = 'page-btn';
+  nextBtn.textContent = '下頁 →';
+  nextBtn.disabled = count < PAGE_SIZE;
+  nextBtn.onclick = () => { currentPage++; fetchCompanies(); window.scrollTo(0,0); };
+  pg.appendChild(nextBtn);
+}
+
+function showError(msg) {
+  document.getElementById('stateBox').style.display = '';
+  document.getElementById('stateBox').innerHTML = `
+    <div class="state-icon">⚠</div>
+    <div class="state-title">資料載入失敗</div>
+    <div class="state-sub">${msg || '請稍後再試'}</div>`;
+  document.getElementById('resultsBody').innerHTML = '';
+  document.getElementById('pagination').innerHTML = '';
+}
+
+function formatDate(d) {
+  if (!d) return '—';
+  const s = String(d);
+  if (s.length === 7) {
+    const y = parseInt(s.substring(0,3)) + 1911;
+    const m = s.substring(3,5);
+    const day = s.substring(5,7);
+    return `${y}/${m}/${day}`;
+  }
+  return s;
+}
+
+function openModal(c) {
+  document.getElementById('modalId').textContent = `統一編號 · ${c.Business_Accounting_NO || '—'}`;
+  document.getElementById('modalName').textContent = c.Company_Name || '—';
+
+  const fields = [
+    ['狀態', c.Company_Status === '01' ? '核准設立（營業中）' : (c.Company_Status || '—')],
+    ['資本額', c.Capital_Stock_Amount ? Number(c.Capital_Stock_Amount).toLocaleString() + ' 元' : '—'],
+    ['地址', (c.Company_Location || '—').replace(/　/g, ' ').trim()],
+    ['設立日期', formatDate(c.Company_Setup_Date)],
+    ['代表人', c.Responsible_Name || '—'],
+    ['組織類型', c.Company_Type || '—'],
+  ];
+
+  const grid = document.getElementById('modalGrid');
+  grid.innerHTML = '';
+  fields.forEach(([k, v]) => {
+    grid.innerHTML += `<div class="detail-label">${k}</div><div class="detail-val">${v}</div>`;
+  });
+
+  document.getElementById('modalOverlay').classList.add('open');
+}
+
+function closeModal(e) {
+  if (e.target.id === 'modalOverlay') closeModalDirect();
+}
+
+function closeModalDirect() {
+  document.getElementById('modalOverlay').classList.remove('open');
+}
+
+document.getElementById('searchInput').addEventListener('keydown', e => {
+  if (e.key === 'Enter') doSearch();
+});
+
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') closeModalDirect();
+});
+
+
+</script>
+</body>
+</html>
