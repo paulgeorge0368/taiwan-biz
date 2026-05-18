@@ -619,11 +619,12 @@
 <script>
 const PROXY = 'https://taiwan-api-proxy.kuofong-engineer.workers.dev';
 const API_BASE = `${PROXY}/od/data/api/`;
-// const COMPANY_API = '6BBA2268-1367-4B42-9CCA-BC17499EBE8C';
-const COMPANY_API = '236EE382-4942-41A9-BD03-CA0709025E7C';
+const API_BY_ID = '5F64D864-61CB-4D0D-8AD9-492047CC1EA6';
+const API_BY_NAME = '6BBA2268-1367-4B42-9CCA-BC17499EBE8C';
 
 let currentPage = 0;
 let currentQuery = '';
+let currentType = '';
 let totalCount = 0;
 const PAGE_SIZE = 25;
 
@@ -643,16 +644,18 @@ function doSearch() {
   const q = document.getElementById('searchInput').value.trim();
   if (!q) return;
   currentQuery = q;
+  currentType = '';
   currentPage = 0;
   fetchCompanies();
 }
 
-// function searchByType(type) {
-//   currentQuery = type;
-//   currentPage = 0;
-//   fetchCompanies();
-//   setNavActive(type === '上市' ? 'nav-listed' : 'nav-otc');
-// }
+function searchByType(type) {
+  currentQuery = type;
+  currentType = 'type';
+  currentPage = 0;
+  fetchCompanies();
+  setNavActive(type === '上市' ? 'nav-listed' : 'nav-otc');
+}
 
 function showSection() {
   document.getElementById('home-section').style.display = 'none';
@@ -677,9 +680,9 @@ async function fetchCompanies() {
     // 判斷是否為統一編號（純數字8碼）
     const isId = /^\d{8}$/.test(currentQuery.trim());
     if (isId) {
-      url = `${API_BASE}${COMPANY_API}?$format=json&$filter=Business_Accounting_NO eq ${currentQuery.trim()}&$skip=${offset}&$top=${PAGE_SIZE}`;
+      url = `${API_BASE}${API_BY_ID}?$format=json&$filter=Business_Accounting_NO eq ${currentQuery.trim()}&$skip=${offset}&$top=${PAGE_SIZE}`;
     } else {
-      url = `${API_BASE}${COMPANY_API}?$format=json&$filter=Company_Name like ${encodeURIComponent(currentQuery)} and Company_Status eq 01&$skip=${offset}&$top=${PAGE_SIZE}`;
+      url = `${API_BASE}${API_BY_NAME}?$format=json&$filter=Company_Name like ${encodeURIComponent(currentQuery)} and Company_Status eq 01&$skip=${offset}&$top=${PAGE_SIZE}`;
     }
 
     const res = await fetch(url);
