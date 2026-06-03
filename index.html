@@ -10,7 +10,7 @@
 
 
 <body>
-
+<h1>2026-0603-13:41</h1>
 <input type="text" id="searchInput" placeholder="輸入公司名稱或統一編號…" autocomplete="off" />
 <button class="search-btn" onclick="doSearch()">SEARCH</button>
 
@@ -73,7 +73,7 @@ function renderList(data) {
 
 
 async function loadRandom() {
-    const randomSkip = Math.floor(Math.random() * 10000);
+    const randomSkip = Math.floor(Math.random() * 1000);
     const url = `${API_BY_NAME}?$format=json&$filter=Company_Status eq 01&$skip=${randomSkip}&$top=5`;
     await loadResults(url);
 }
