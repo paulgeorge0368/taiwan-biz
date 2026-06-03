@@ -78,9 +78,9 @@ function renderList(data) {
     data.forEach(c => {
         const div = document.createElement('div');
         div.innerHTML = `
-            <a href="company.html?id=${c.Business_Accounting_NO}">${c.Company_Name}</a>
-            ｜ ${c.Business_Accounting_NO}
-            ｜ ${c.Company_Location || '—'}
+        <a href="company.html?id=${c.id}">${c.name}</a>
+        ｜ ${c.id}
+        ｜ ${c.address || '—'}
         `;
         list.appendChild(div);
     });
