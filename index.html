@@ -20,6 +20,7 @@
 const PROXY = 'https://taiwan-api-proxy.kuofong-engineer.workers.dev';
 const API_BY_NAME = `${PROXY}/od/data/api/6BBA2268-1367-4B42-9CCA-BC17499EBE8C`;
 const API_BY_ID   = `${PROXY}/od/data/api/5F64D864-61CB-4D0D-8AD9-492047CC1EA6`;
+const API = 'https://taiwan-biz-api.kuofong-engineer.workers.dev';
 
 const HOT_COMPANIES = [
     '22099131', // 台積電
@@ -37,13 +38,14 @@ const HOT_COMPANIES = [
 function doSearch() {
     const q = document.getElementById('searchInput').value.trim();
     if (!q) return;
+    loadResults(`${API}/search?q=${encodeURIComponent(q)}`);
 
-    const isId = /^\d{8}$/.test(q);
-    if (isId) {
-        loadResults(`${API_BY_ID}?$format=json&$filter=Business_Accounting_NO eq ${q}&$top=25`);
-    } else {
-        loadResults(`${API_BY_NAME}?$format=json&$filter=Company_Name like ${encodeURIComponent(q)} and Company_Status eq 01&$top=25`);
-    }
+    // const isId = /^\d{8}$/.test(q);
+    // if (isId) {
+    //     loadResults(`${API_BY_ID}?$format=json&$filter=Business_Accounting_NO eq ${q}&$top=25`);
+    // } else {
+    //     loadResults(`${API_BY_NAME}?$format=json&$filter=Company_Name like ${encodeURIComponent(q)} and Company_Status eq 01&$top=25`);
+    // }
 }
 
 // Enter 鍵觸發搜尋
@@ -95,7 +97,7 @@ async function loadHotCompanies() {
 
     const results = await Promise.all(
         selected.map(id =>
-            fetch(`${API_BY_ID}?$format=json&$filter=Business_Accounting_NO eq ${id}&$top=1`)
+            fetch(`${API}/company/${id}`)
             .then(r => r.json())
             .then(data => data[0])
             .catch(() => null)
