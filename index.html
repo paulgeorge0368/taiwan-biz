@@ -21,6 +21,19 @@ const PROXY = 'https://taiwan-api-proxy.kuofong-engineer.workers.dev';
 const API_BY_NAME = `${PROXY}/od/data/api/6BBA2268-1367-4B42-9CCA-BC17499EBE8C`;
 const API_BY_ID   = `${PROXY}/od/data/api/5F64D864-61CB-4D0D-8AD9-492047CC1EA6`;
 
+const HOT_COMPANIES = [
+    '22099131', // 台積電
+    '04356494', // 鴻海
+    '23678228', // 聯發科
+    '11162835', // 統一企業
+    '97176270', // 台灣大哥大
+    '96979609', // 中華電信
+    '02674916', // 富邦金控
+    '53616526', // 國泰金控
+    '11700741', // 台塑
+    '11558247', // 遠東集團
+];
+
 function doSearch() {
     const q = document.getElementById('searchInput').value.trim();
     if (!q) return;
@@ -72,10 +85,30 @@ function renderList(data) {
 }
 
 
-async function loadRandom() {
-    const randomSkip = Math.floor(Math.random() * 1000);
-    const url = `${API_BY_NAME}?$format=json&$filter=Company_Status eq 01&$skip=${randomSkip}&$top=5`;
-    await loadResults(url);
+async function loadHotCompanies() {
+    const shuffled = HOT_COMPANIES.sort(() => Math.random() - 0.5);
+    const selected = shuffled.slice(0, 5);
+
+    const list = document.getElementById('resultList');
+    list.textContent = '載入中...';
+    list.innerHTML = '';
+
+    const results = await Promise.all(
+        selected.map(id =>
+            fetch(`${API_BY_ID}?$format=json&$filter=Business_Accounting_NO eq ${id}&$top=1`)
+            .then(r => r.json())
+            .then(data => data[0])
+            .catch(() => null)
+        )
+    );
+
+    const valid = results.filter(Boolean);
+    if (valid.length === 0) {
+        list.textContent = '載入失敗';
+        return;
+    }
+
+    renderList(valid);
 }
 
 loadRandom();
