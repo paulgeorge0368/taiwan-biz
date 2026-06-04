@@ -1,8 +1,0 @@
-name = "taiwan-biz-api"
-main = "index.js"
-compatibility_date = "2024-01-01"
-
-[[d1_databases]]
-binding = "DB"
-database_name = "taiwan-companies"
-database_id = "716bb0cd-c990-4194-97f9-18383a362ea3"
