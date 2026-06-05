@@ -236,6 +236,8 @@ tr:hover td {
     background-size: cover;
     background-repeat: no-repeat;
     font-size: 15px;
+    padding-top: 120px;
+    padding-bottom: 90px;
 }
 .container-head>div{
     width: 100%;
@@ -381,6 +383,10 @@ tr:hover td {
     }
     .google-advertise>a>img:nth-child(2) {
         width: 5vw;
+    }
+    .container-head {
+        padding-top: 100px;
+        padding-bottom: 40px;
     }
 }
 </style>

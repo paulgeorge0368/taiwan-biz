@@ -387,5 +387,9 @@ tr:hover td {
     .google-advertise>a>img:nth-child(2) {
         width: 5vw;
     }
+    .container-head {
+        padding-top: 100px;
+        padding-bottom: 40px;
+    }
 }
 </style>
