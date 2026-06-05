@@ -525,14 +525,16 @@ watch(() => route.params.id, (newId) => {
     .section-gap{
         height: 50px;
     }
-    .layout { grid-template-columns: 1fr; }
+    .layout { 
+        grid-template-columns: 1fr; 
+    }
     .company-header-title-icon img{
         width: 17px;
     }
     .company-header-title-icon{
         width: 36px;
     }
-    .company-header-title[data-v-251e7fda] {
+    .company-header-title {
         grid-template-columns: auto 1fr;
     }
     .company-header{
@@ -691,11 +693,11 @@ watch(() => route.params.id, (newId) => {
         padding-top: 5px;
         padding-bottom: 10px;
     }
-    .gov-info-header[data-v-251e7fda] {
+    .gov-info-header {
         flex-direction: column-reverse;
         gap: 10px;
     }
-    .gov-section hr[data-v-251e7fda] {
+    .gov-section hr {
         margin-top: 16px;
     }
 }
