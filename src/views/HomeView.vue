@@ -230,14 +230,12 @@ tr:hover td {
 }
 
 .container-head{
-    aspect-ratio: 1931 / 603;
     width: 100%;
     background-image: url(../assets/banner-home-bg-t.webp);
     background-position: center;
     background-size: cover;
     background-repeat: no-repeat;
     font-size: 15px;
-    min-height: 70vh;
 }
 .container-head>div{
     width: 100%;
