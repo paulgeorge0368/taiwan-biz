@@ -292,7 +292,7 @@ tr:hover td {
     width: 100%;
     display: block;
     position: relative;
-    border: 1px solid black;
+    border: 1px solid #c4c4c4;
 }
 .google-advertise>a>img:nth-child(1){
     width: 100%;
