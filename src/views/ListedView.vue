@@ -77,7 +77,7 @@
             <p>google提供的推薦</p>
             <a href="https://www.newloan.com.tw/activity/">
                 <img 
-                    src="/src/assets/yahoo-970x250-20260206_3-tiny.webp" 
+                    src="/src/assets/奇摩廣告-970x250-20260206_3.jpg" 
                     alt="二胎房貸"
                     width="970"
                     height="250"
