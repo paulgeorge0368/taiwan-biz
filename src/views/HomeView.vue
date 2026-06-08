@@ -127,15 +127,15 @@
     }
 
     function doSearch() {
-    const q = searchQuery.value.trim()
-    if (!q) return
+        const q = searchQuery.value.trim()
+        if (!q) return
 
-    results.value = store.companies.filter(c =>
-        c.name.includes(q) ||
-        c.id === q ||
-        c.code === q ||
-        (c.short_name && c.short_name.includes(q))
-    )
+        results.value = store.companies.filter(c =>
+            (c.name && c.name.includes(q)) ||
+            c.id === q ||
+            c.code === q ||
+            (c.short_name && c.short_name.includes(q))
+        )
     }
 
     function goToCompany(id) {
