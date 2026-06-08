@@ -131,7 +131,7 @@ function doSearch() {
 
   const listed = store.companies.filter(c => c.type === '上市')
   results.value = listed.filter(c =>
-    c.name.includes(q) ||
+    (c.name && c.name.includes(q)) ||
     c.id === q ||
     c.code === q ||
     (c.short_name && c.short_name.includes(q))

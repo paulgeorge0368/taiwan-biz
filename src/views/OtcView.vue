@@ -133,7 +133,7 @@ function doSearch() {
 
   const otc = store.companies.filter(c => c.type === '上櫃')
   results.value = otc.filter(c =>
-    c.name.includes(q) ||
+    (c.name && c.name.includes(q)) ||
     c.id === q ||
     c.code === q ||
     (c.short_name && c.short_name.includes(q))
