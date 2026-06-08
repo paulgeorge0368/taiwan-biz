@@ -76,7 +76,7 @@
 
         <div class="google-advertise">
             <p>google提供的推薦</p>
-            <a href="https://www.newloan.com.tw/">
+            <a href="https://www.newloan.com.tw/activity/">
                 <img 
                     src="/src/assets/yahoo-970x250-20260206_3-tiny.webp" 
                     alt="二胎房貸"

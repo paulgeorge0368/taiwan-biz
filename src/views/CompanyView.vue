@@ -122,7 +122,7 @@
             <h2>最新熱門搜尋公司</h2>
             <div class="gov-info-section">
                 <div class="gov-info-header">
-                    <a href="https://www.kuofong.com.tw/">公司名稱：<span>國峯租賃股份有限公司</span></a>
+                    <a href="https://www.newloan.com.tw/">公司名稱：<span>國峯租賃股份有限公司</span></a>
                     <span class="gov-status-tag">核准設立</span>
                 </div>
 
@@ -286,7 +286,7 @@
 
         <div class="google-advertise">
             <p>google提供的推薦</p>
-            <a href="https://www.newloan.com.tw/">
+            <a href="https://www.newloan.com.tw/activity/">
                 <img 
                     src="/src/assets/yahoo-970x250-20260206_3-tiny.webp" 
                     alt="二胎房貸"
