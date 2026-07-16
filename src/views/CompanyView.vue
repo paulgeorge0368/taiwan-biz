@@ -361,6 +361,11 @@ async function loadCompany(id) {
     related.value = store.companies
       .filter(c => c.industry === company.value.industry && c.id !== id)
       .slice(0, 8)
+    
+    const canonical = document.querySelector('link[rel="canonical"]') || document.createElement('link')
+    canonical.rel = 'canonical'
+    canonical.href = `https://taiwan-biz.pages.dev/company/${id}`
+    document.head.appendChild(canonical)
   }
   loading.value = false
 }
