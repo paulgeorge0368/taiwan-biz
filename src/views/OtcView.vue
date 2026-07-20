@@ -5,7 +5,7 @@
             <div>
                 <h1>上櫃公司查詢</h1>
                 <p>公司名稱、統編或股票代號</p>
-                <p><span>最後更新日期:2026-4-20</span><span>資料數(7,051,077)</span></p>
+                <p><span>最後更新日期:2026-7-20</span><span>資料數(7,051,077)</span></p>
                 <div class="search-bar">
                     <img 
                         src="../assets/sreach-icon.svg" 
@@ -52,7 +52,7 @@
                 </div>
 
                 <div class="results-table-mobile">
-                    <div class="card-item" v-for="c in results" :key="c.id" @click="goToCompany(c.id)">
+                    <div class="card-item" v-for="c in results.slice(0, visibleCount)" :key="c.id" @click="goToCompany(c.id)">
                         <p class="card-name">{{ c.name }}</p>
                         <p class="card-row">
                             <span>統一編號</span>
@@ -71,6 +71,13 @@
                             <span>{{ formatDate(c.established) }}</span>
                         </p>
                     </div>
+                    <button 
+                v-if="visibleCount < results.length" 
+                @click="showMore" 
+                class="show-more-btn"
+                >
+                顯示更多
+                </button>
                 </div>
         </div>
 
@@ -110,6 +117,8 @@ const store = useCompanyStore()
 const searchQuery = ref('')
 const results = ref([])
 
+const visibleCount = ref(5)
+
 const status = computed(() => {
   if (store.loading) return '資料載入中...'
   const otc = store.companies.filter(c => c.type === '上櫃')
@@ -147,8 +156,12 @@ function goToCompany(id) {
 onMounted(async () => {
   await store.fetchCompanies()
   const otc = store.companies.filter(c => c.type === '上櫃')
-  results.value = [...otc].sort(() => Math.random() - 0.5).slice(0, 5)
+  results.value = [...otc].sort(() => Math.random() - 0.5).slice(0, 10)
 })
+
+function showMore() {
+    visibleCount.value = results.value.length
+}
 </script>
 
 <style scoped>
@@ -391,5 +404,20 @@ tr:hover td {
         padding-top: 100px;
         padding-bottom: 40px;
     }
+}
+
+.results-table-desk{
+    max-height: 254px;
+    overflow-y: auto;
+}
+.show-more-btn{
+    width: 100%;
+    font-size: 1em;
+    background: transparent;
+    border: 1px solid #8e8e8e;
+    padding: 0.5em;
+    border-radius: 0.5em;
+    font-weight: 500;
+    color: #8e8e8e;
 }
 </style>

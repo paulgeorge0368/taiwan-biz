@@ -6,7 +6,7 @@
             <div>
                 <h1>台灣查詢公司資訊</h1>
                 <p>公司名稱、統編或股票代號</p>
-                <p><span>最後更新日期:2026-4-20</span><span>資料數(7,051,077)</span></p>
+                <p><span>最後更新日期:2026-7-20</span><span>資料數(7,051,077)</span></p>
                 <div class="search-bar">
                     <img 
                         src="../assets/sreach-icon.svg" 
@@ -53,7 +53,7 @@
             </div>
 
             <div class="results-table-mobile">
-                <div class="card-item" v-for="c in results" :key="c.id" @click="goToCompany(c.id)">
+                <div class="card-item" v-for="c in results.slice(0, visibleCount)" :key="c.id" @click="goToCompany(c.id)">
                     <p class="card-name">{{ c.name }}</p>
                     <p class="card-row">
                         <span>統一編號</span>
@@ -72,6 +72,28 @@
                         <span>{{ formatDate(c.established) }}</span>
                     </p>
                 </div>
+                <button 
+                v-if="visibleCount < results.length" 
+                @click="showMore" 
+                class="show-more-btn"
+                >
+                顯示更多
+                </button>
+            </div>
+        </div>
+
+        <div class="gov-section">
+            <h2>最新熱門搜尋公司</h2>
+            <div class="gov-info-section">
+                <div class="gov-info-header">
+                    <a href="https://www.newloan.com.tw/">公司名稱：<span>厝好貸有限公司</span></a>
+                    <span class="gov-status-tag">核准設立</span>
+                </div>
+
+                <p class="gov-description">
+                    國峯厝好貸全台服務，二胎房貸品牌，上市櫃融資撥款，藝人代言更有保障，ISO國際雙認證，服務與資安都獲得肯定，是銀行之後，最佳的貸款選擇。
+                </p>
+
             </div>
         </div>
 
@@ -110,6 +132,8 @@
     const searchQuery = ref('')
     const results = ref([])
 
+    const visibleCount = ref(5)
+
     const status = computed(() => {
     if (store.loading) return '資料載入中...'
     if (results.value.length > 0) return `找到 ${results.value.length} 筆結果`
@@ -143,9 +167,37 @@
     }
 
     onMounted(async () => {
-    await store.fetchCompanies()
-    results.value = [...store.companies].sort(() => Math.random() - 0.5).slice(0, 5)
+        await store.fetchCompanies()
+
+        const fixed = {
+            id: '60741876',
+            code: '—',
+            name: '厝好貸有限公司',
+            short_name: '厝好貸',
+            type: '一般',
+            industry: '17',
+            address: '臺北市中正區衡陽路51號13樓之4',
+            chairman: '郭耕宇',
+            general_manager: '',
+            spokesman: '',
+            phone: '02-2313-1256',
+            fax: '0800-066-580',
+            email: '',
+            website: 'https://www.newloan.com.tw/',
+            established: '20250318',
+            listed_date: '',
+            capital: '5000000',
+        }
+
+        const random = [...store.companies].sort(() => Math.random() - 0.5).slice(0, 9)
+        const randomIndex = Math.floor(Math.random() * random.length)
+        random.splice(randomIndex, 0, fixed)
+        results.value = random
     })
+
+    function showMore() {
+        visibleCount.value = results.value.length
+    }
 </script>
 
 <style scoped>
@@ -388,5 +440,174 @@ tr:hover td {
         padding-top: 100px;
         padding-bottom: 40px;
     }
+}
+
+
+.gov-section{
+    padding: 0 20px;
+    margin: 0 auto;
+    width: 100%;
+    max-width: 1000px;
+    margin-bottom: var(--section-gap);
+}
+.gov-section h2{
+    font-size: 25px;
+    font-weight: 700;
+    color: #348dfd;
+    margin-bottom: 15px;
+}
+.gov-info-section {
+  background: #fff;
+  border-radius: 8px;
+  padding: 30px;
+}
+
+.gov-info-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 25px;
+}
+
+.gov-info-header a {
+  font-size: 25px;
+  font-weight: 700;
+  display: block;
+  color: black;
+  text-decoration: unset !important;
+}
+
+.gov-info-header a span {
+  color: #348dfd;
+}
+
+.gov-status-tag {
+  padding: 4px 12px;
+  border-radius: 4px;
+  font-size: 13px;
+  border: 1px solid #ccc;
+}
+
+.gov-description {
+    font-size: 15px;
+    color: #555;
+    line-height: 1.8;
+    font-weight: 500;
+    width: 100%;
+    max-width: 660px;
+}
+
+.gov-section hr{
+    border: unset;
+    border-top: 1px solid #d5d5d5;
+    margin-top: 25px;
+    display: block;
+    margin-bottom: 20px;
+}
+
+.gov-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 15px;
+}
+
+.gov-table tr {
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.gov-table tr:last-child {
+  border-bottom: none;
+}
+
+.gov-table th {
+  text-align: left;
+  padding: 10px 16px;
+  color: #333;
+  font-weight: 500;
+  width: 290px;
+}
+
+.gov-table td {
+  padding: 10px 16px;
+  color: #333;
+  font-weight: 500;
+  line-height: 1.7em;
+}
+
+.gov-table td a{
+    border: 1px solid #348dfd;
+    color: #348dfd;
+    text-decoration: unset !important;
+    padding: 1px 5px 2px;
+    margin: 0 5px;
+}
+
+.gov-table>tbody>tr:nth-child(even){
+    background-color: #efefef;
+}
+
+@media (max-width:767px) {
+    .gov-info-section{
+        padding: 20px;
+    }
+    .gov-table th {
+        width: 35%;
+    }
+}
+@media (max-width: 640px) {
+    .gov-section h2{
+        font-size: 20px;
+    }
+    .gov-info-header {
+        margin-bottom: 15px;
+    }
+    .gov-info-header a{
+        font-size: 19px;
+    }
+    .gov-description{
+        line-height: 1.5em;
+    }
+
+    .gov-table tr {
+        display: flex;
+        flex-direction: column;
+        padding: 0px 0;
+    }
+
+    .gov-table>tbody>tr:nth-child(even){
+        background-color: transparent;
+    }
+    .gov-table th{
+        background-color:  #efefef;
+        width: 100%;
+        padding: 5px 15px;
+    }
+    .gov-table td{
+        padding: 0;
+        padding-top: 5px;
+        padding-bottom: 10px;
+    }
+    .gov-info-header {
+        flex-direction: column-reverse;
+        gap: 10px;
+    }
+    .gov-section hr {
+        margin-top: 16px;
+    }
+}
+
+.results-table-desk{
+    max-height: 254px;
+    overflow-y: auto;
+}
+.show-more-btn{
+    width: 100%;
+    font-size: 1em;
+    background: transparent;
+    border: 1px solid #8e8e8e;
+    padding: 0.5em;
+    border-radius: 0.5em;
+    font-weight: 500;
+    color: #8e8e8e;
 }
 </style>
