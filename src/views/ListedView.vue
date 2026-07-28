@@ -148,7 +148,12 @@ function doSearch() {
 }
 
 function goToCompany(id) {
-  router.push(`/company/${id}`)
+  const staticPages = ['60741876'] // 有靜態頁面的統編列表
+  if (staticPages.includes(id)) {
+    window.location.href = `/company/${id}/`
+  } else {
+    router.push(`/company/${id}`)
+  }
 }
 
 onMounted(async () => {
